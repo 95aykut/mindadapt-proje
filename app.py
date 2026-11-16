@@ -150,8 +150,14 @@ with st.sidebar:
     if teacher_password == "2204Bilsim":
         st.success("?? Yetkili Giri?i Sa?land?")
         if os.path.exists(DATA_FILE):
-            df_all = pd.read_csv(DATA_FILE)
-            st.metric("Toplam Kat?l?mc?", df_all["Katilimci_Kodu"].nunique())
+if os.path.exists(DATA_FILE):
+            try:
+                df_all = pd.read_csv(DATA_FILE, encoding="utf-8-sig")
+            except UnicodeDecodeError:
+                try:
+                    df_all = pd.read_csv(DATA_FILE, encoding="cp1254")
+                except Exception:
+                    df_all = pd.read_csv(DATA_FILE, encoding="latin-1", errors="replace")            st.metric("Toplam Kat?l?mc?", df_all["Katilimci_Kodu"].nunique())
             st.metric("Toplam Yan?t", len(df_all))
             csv_data = df_all.to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
             st.download_button(
@@ -211,7 +217,7 @@ elif st.session_state.step == "test":
     q = st.session_state.current_q
     st.markdown(f"### {q['metin']}")
     st.write("")
-    options = {1: "1 ¡X Hicbir zaman", 2: "2 ¡X Nadiren", 3: "3 ¡X Bazen", 4: "4 ¡X S?k s?k", 5: "5 ¡X Her zaman"}
+    options = {1: "1 Â¡X Hicbir zaman", 2: "2 Â¡X Nadiren", 3: "3 Â¡X Bazen", 4: "4 Â¡X S?k s?k", 5: "5 Â¡X Her zaman"}
     choice = st.radio("Sana en uygun olan? sec:", options=list(options.keys()), format_func=lambda x: options[x], index=None, key=f"radio_{q['id']}_{current_idx}")
     st.write("")
     if st.button("Cevapla ve Devam Et ??", use_container_width=True):
