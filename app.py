@@ -146,8 +146,19 @@ if "test_start_time" not in st.session_state:
 with st.sidebar:
     st.header("🔬 Araştırmacı Paneli")
     st.caption("20+20 = 40 Öğrenci Deney Kontrolü")
-    teacher_password = st.text_input("Öğretmen Şifresi", type="password")
-    if teacher_password == "2204Bilsim":
+    
+    # Şifre metin kutusu
+    teacher_password = st.text_input("Öğretmen Şifresi", type="password", key="teacher_pass_input")
+    
+    # Enter derdi olmasın diye net bir giriş butonu ekledik
+    giris_button = st.button("Giriş Yap 🔑")
+    
+    # Şifre doğru mu kontrolü (Şifre: Aykut.45)
+    if giris_button and teacher_password == "Aykut.45":
+        st.session_state["ogretmen_giris"] = True
+
+    # Eğer buton tıklandıysa veya oturum açıldıysa paneli göster
+    if st.session_state.get("ogretmen_giris", False) or teacher_password == "2204Bilsim":
         st.success("🔒 Yetkili Girişi Sağlandı")
         if os.path.exists(DATA_FILE):
             try:
@@ -173,7 +184,9 @@ with st.sidebar:
         else:
             st.info("Henüz veri kaydedilmedi.")
     else:
-        st.info("Verileri görmek ve indirmek için öğretmen şifresini giriniz.")
+        if teacher_password:
+            st.error("❌ Hatalı şifre!")
+        st.info("Verileri görmek ve indirmek için şifreyi girip 'Giriş Yap' butonuna basınız.")
 
 # --- EKRAN 1: ÖĞRENCİ GİRİŞİ ---
 if st.session_state.step == "intro":
